@@ -1,0 +1,54 @@
+{
+  "project_info": {
+    "project_number": "891232108276",
+    "project_id": "recetario-4deaf",
+    "storage_bucket": "recetario-4deaf.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:891232108276:android:bb4518ce464469ebdea8a1",
+        "android_client_info": {
+          "package_name": "com.mycompany.recetario"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "891232108276-tgig95mgqvo2ist290483pml75lgifu7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.mycompany.recetario",
+            "certificate_hash": "9bbb3186b2189ef16d8f272bdab59362c395cbb4"
+          }
+        },
+        {
+          "client_id": "891232108276-5a3u6i3e5u537s069b99sh2m5vobk7gd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCkXGo-YmuLOMYcFYHLwhwuG7ED9iRqSc8"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "891232108276-5a3u6i3e5u537s069b99sh2m5vobk7gd.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "891232108276-e0s5vegqbufkas7bc5ktmqlof2lepgeo.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.mycompany.recetario"
+              }
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
