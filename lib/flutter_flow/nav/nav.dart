@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:page_transition/page_transition.dart';
 import '../flutter_flow_theme.dart';
-import '../../backend/backend.dart';
+import '/backend/backend.dart';
 
 import '../../auth/base_auth_user_provider.dart';
 
@@ -106,6 +106,16 @@ GoRouter createRouter(AppStateNotifier appStateNotifier) => GoRouter(
           name: 'Novedades',
           path: '/novedades',
           builder: (context, params) => NovedadesWidget(),
+        ),
+        FFRoute(
+          name: 'Receta',
+          path: '/receta',
+          builder: (context, params) => RecetaWidget(),
+        ),
+        FFRoute(
+          name: 'editarPerfil',
+          path: '/editarPerfil',
+          builder: (context, params) => EditarPerfilWidget(),
         )
       ].map((r) => r.toRoute(appStateNotifier)).toList(),
       urlPathStrategy: UrlPathStrategy.path,
@@ -241,7 +251,8 @@ class FFParameters {
       return param;
     }
     // Return serialized value.
-    return deserializeParam<T>(param, type, isList, collectionNamePath);
+    return deserializeParam<T>(param, type, isList,
+        collectionNamePath: collectionNamePath);
   }
 }
 

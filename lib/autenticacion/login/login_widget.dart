@@ -112,23 +112,23 @@ class _LoginWidgetState extends State<LoginWidget>
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Padding(
-                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 70.0, 0.0, 32.0),
+                  padding: EdgeInsetsDirectional.fromSTEB(0.0, 30.0, 0.0, 0.0),
                   child: Container(
-                    width: 200.0,
-                    height: 80.0,
+                    width: 150.0,
+                    height: 150.0,
                     decoration: BoxDecoration(
-                      borderRadius: BorderRadius.circular(16.0),
+                      color: Colors.white,
+                      shape: BoxShape.circle,
                     ),
                     alignment: AlignmentDirectional(0.0, 0.0),
-                    child: Text(
-                      'Flavorful Finds',
-                      maxLines: 2,
-                      style: FlutterFlowTheme.of(context).displaySmall.override(
-                            fontFamily: 'Plus Jakarta Sans',
-                            color: Colors.white,
-                            fontSize: 30.0,
-                            fontWeight: FontWeight.w600,
-                          ),
+                    child: ClipRRect(
+                      borderRadius: BorderRadius.circular(8.0),
+                      child: Image.asset(
+                        'assets/images/image.png',
+                        width: 100.0,
+                        height: 100.0,
+                        fit: BoxFit.cover,
+                      ),
                     ),
                   ),
                 ),
@@ -349,7 +349,8 @@ class _LoginWidgetState extends State<LoginWidget>
                                     return;
                                   }
 
-                                  context.goNamedAuth('Novedades', mounted);
+                                  context.goNamedAuth(
+                                      'Novedades', context.mounted);
                                 },
                                 text: 'Iniciar Sesion',
                                 options: FFButtonOptions(
@@ -405,7 +406,8 @@ class _LoginWidgetState extends State<LoginWidget>
                                     return;
                                   }
 
-                                  context.goNamedAuth('Novedades', mounted);
+                                  context.goNamedAuth(
+                                      'Novedades', context.mounted);
                                 },
                                 text: 'Continuar con Google',
                                 icon: FaIcon(
@@ -453,7 +455,7 @@ class _LoginWidgetState extends State<LoginWidget>
                                         }
 
                                         context.goNamedAuth(
-                                            'Novedades', mounted);
+                                            'Novedades', context.mounted);
                                       },
                                       text: 'Continuar con Apple',
                                       icon: FaIcon(

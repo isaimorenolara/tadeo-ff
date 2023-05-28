@@ -1,3 +1,5 @@
+import '/auth/firebase_auth/auth_util.dart';
+import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
@@ -79,16 +81,46 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 75.0,
-                      height: 75.0,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.network(
-                        'https://picsum.photos/seed/406/600',
-                        fit: BoxFit.cover,
+                    AuthUserStreamWidget(
+                      builder: (context) => FutureBuilder<List<UserRecord>>(
+                        future: queryUserRecordOnce(
+                          singleRecord: true,
+                        ),
+                        builder: (context, snapshot) {
+                          // Customize what your widget looks like when it's loading.
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SizedBox(
+                                width: 50.0,
+                                height: 50.0,
+                                child: CircularProgressIndicator(
+                                  color: FlutterFlowTheme.of(context).primary,
+                                ),
+                              ),
+                            );
+                          }
+                          List<UserRecord> circleImageUserRecordList =
+                              snapshot.data!;
+                          final circleImageUserRecord =
+                              circleImageUserRecordList.isNotEmpty
+                                  ? circleImageUserRecordList.first
+                                  : null;
+                          return Container(
+                            width: 75.0,
+                            height: 75.0,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.network(
+                              valueOrDefault<String>(
+                                currentUserPhoto,
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -100,12 +132,14 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Tadeo Lozano',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 18.0,
-                          ),
+                    AuthUserStreamWidget(
+                      builder: (context) => Text(
+                        currentUserDisplayName,
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Poppins',
+                              fontSize: 18.0,
+                            ),
+                      ),
                     ),
                   ],
                 ),
@@ -115,7 +149,10 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'tadeolozano@gmail.com',
+                    valueOrDefault<String>(
+                      currentUserEmail,
+                      'user@gmail.com',
+                    ),
                     style: FlutterFlowTheme.of(context).bodyMedium,
                   ),
                 ],
@@ -127,23 +164,33 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   children: [
-                    ListTile(
-                      leading: Icon(
-                        Icons.person_sharp,
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        context.pushNamed('editarPerfil');
+                      },
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.person_sharp,
+                        ),
+                        title: Text(
+                          'Cuenta',
+                          style: FlutterFlowTheme.of(context)
+                              .headlineSmall
+                              .override(
+                                fontFamily: 'Poppins',
+                                fontSize: 20.0,
+                              ),
+                        ),
+                        subtitle: Text(
+                          'Configura tu cuenta',
+                          style: FlutterFlowTheme.of(context).titleSmall,
+                        ),
+                        dense: false,
                       ),
-                      title: Text(
-                        'Cuenta',
-                        style:
-                            FlutterFlowTheme.of(context).headlineSmall.override(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 20.0,
-                                ),
-                      ),
-                      subtitle: Text(
-                        'Configura tu cuenta',
-                        style: FlutterFlowTheme.of(context).titleSmall,
-                      ),
-                      dense: false,
                     ),
                     ListTile(
                       leading: Icon(
@@ -349,6 +396,7 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                       fontFamily: 'Poppins',
                       color: Colors.white,
                     ),
+                elevation: 0.0,
                 borderSide: BorderSide(
                   color: Colors.transparent,
                   width: 1.0,
@@ -361,6 +409,7 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
           elevation: 4.0,
         ),
         body: SafeArea(
+          top: true,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -377,6 +426,7 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                       children: [
                         Row(
                           mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
                             FFButtonWidget(
                               onPressed: () {
@@ -480,93 +530,83 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                         ),
                         Row(
                           mainAxisSize: MainAxisSize.max,
+                          mainAxisAlignment: MainAxisAlignment.center,
                           children: [
-                            Padding(
-                              padding: EdgeInsetsDirectional.fromSTEB(
-                                  5.0, 0.0, 0.0, 0.0),
-                              child: Stack(
-                                children: [
-                                  Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          3.0, 0.0, 0.0, 0.0),
-                                      child: Image.network(
-                                        'https://cdn7.recetasdeescandalo.com/wp-content/uploads/2022/07/Arroz-chaufa-peruano-con-verduras-pollo-y-huevo.jpg',
-                                        width: 185.0,
-                                        height: 250.0,
-                                        fit: BoxFit.cover,
-                                      ),
-                                    ),
+                            Stack(
+                              children: [
+                                Align(
+                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  child: Image.network(
+                                    'https://cdn7.recetasdeescandalo.com/wp-content/uploads/2022/07/Arroz-chaufa-peruano-con-verduras-pollo-y-huevo.jpg',
+                                    width: 185.0,
+                                    height: 250.0,
+                                    fit: BoxFit.cover,
                                   ),
-                                  Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                ),
+                                Align(
+                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  child: Container(
+                                    width: 185.0,
+                                    height: 250.0,
+                                    decoration: BoxDecoration(
+                                      color: Color(0xCCDFBE53),
+                                    ),
                                     child: Padding(
                                       padding: EdgeInsetsDirectional.fromSTEB(
                                           3.0, 0.0, 0.0, 0.0),
-                                      child: Container(
-                                        width: 185.0,
-                                        height: 250.0,
-                                        decoration: BoxDecoration(
-                                          color: Color(0xCCDFBE53),
-                                        ),
-                                        child: Padding(
+                                      child: FFButtonWidget(
+                                        onPressed: () {
+                                          print('Button pressed ...');
+                                        },
+                                        text: '',
+                                        options: FFButtonOptions(
+                                          width: 185.0,
+                                          height: 250.0,
                                           padding:
                                               EdgeInsetsDirectional.fromSTEB(
-                                                  3.0, 0.0, 0.0, 0.0),
-                                          child: FFButtonWidget(
-                                            onPressed: () {
-                                              print('Button pressed ...');
-                                            },
-                                            text: '',
-                                            options: FFButtonOptions(
-                                              width: 185.0,
-                                              height: 250.0,
-                                              padding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              iconPadding: EdgeInsetsDirectional
-                                                  .fromSTEB(0.0, 0.0, 0.0, 0.0),
-                                              color: Color(0x004B39EF),
-                                              textStyle:
-                                                  FlutterFlowTheme.of(context)
-                                                      .titleSmall
-                                                      .override(
-                                                        fontFamily: 'Poppins',
-                                                        color: Colors.white,
-                                                      ),
-                                              borderSide: BorderSide(
-                                                color: Colors.transparent,
-                                                width: 1.0,
-                                              ),
-                                              borderRadius:
-                                                  BorderRadius.circular(8.0),
-                                            ),
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: Color(0x004B39EF),
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'Poppins',
+                                                    color: Colors.white,
+                                                  ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
                                           ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
                                       ),
                                     ),
                                   ),
-                                  Align(
-                                    alignment: AlignmentDirectional(0.0, 0.0),
-                                    child: Padding(
-                                      padding: EdgeInsetsDirectional.fromSTEB(
-                                          50.0, 110.0, 0.0, 0.0),
-                                      child: Text(
-                                        'Arroces',
-                                        textAlign: TextAlign.center,
-                                        style: FlutterFlowTheme.of(context)
-                                            .bodyMedium
-                                            .override(
-                                              fontFamily: 'Oswald',
-                                              color: Colors.white,
-                                              fontSize: 20.0,
-                                              fontWeight: FontWeight.w800,
-                                            ),
-                                      ),
+                                ),
+                                Align(
+                                  alignment: AlignmentDirectional(0.0, 0.0),
+                                  child: Padding(
+                                    padding: EdgeInsetsDirectional.fromSTEB(
+                                        50.0, 110.0, 0.0, 0.0),
+                                    child: Text(
+                                      'Arroces',
+                                      textAlign: TextAlign.center,
+                                      style: FlutterFlowTheme.of(context)
+                                          .bodyMedium
+                                          .override(
+                                            fontFamily: 'Oswald',
+                                            color: Colors.white,
+                                            fontSize: 20.0,
+                                            fontWeight: FontWeight.w800,
+                                          ),
                                     ),
                                   ),
-                                ],
-                              ),
+                                ),
+                              ],
                             ),
                             Stack(
                               children: [
@@ -594,38 +634,34 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                                       decoration: BoxDecoration(
                                         color: Color(0xB36EA34D),
                                       ),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            5.0, 0.0, 0.0, 0.0),
-                                        child: FFButtonWidget(
-                                          onPressed: () {
-                                            print('Button pressed ...');
-                                          },
-                                          text: '',
-                                          options: FFButtonOptions(
-                                            width: 185.0,
-                                            height: 250.0,
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            iconPadding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    0.0, 0.0, 0.0, 0.0),
-                                            color: Color(0x004B39EF),
-                                            textStyle:
-                                                FlutterFlowTheme.of(context)
-                                                    .titleSmall
-                                                    .override(
-                                                      fontFamily: 'Poppins',
-                                                      color: Colors.white,
-                                                    ),
-                                            borderSide: BorderSide(
-                                              color: Colors.transparent,
-                                              width: 1.0,
-                                            ),
-                                            borderRadius:
-                                                BorderRadius.circular(8.0),
+                                      child: FFButtonWidget(
+                                        onPressed: () {
+                                          print('Button pressed ...');
+                                        },
+                                        text: '',
+                                        options: FFButtonOptions(
+                                          width: 185.0,
+                                          height: 250.0,
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: Color(0x004B39EF),
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'Poppins',
+                                                    color: Colors.white,
+                                                  ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
                                           ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
                                       ),
                                     ),
@@ -659,96 +695,79 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                               0.0, 5.0, 0.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    5.0, 0.0, 0.0, 0.0),
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            3.0, 0.0, 0.0, 0.0),
-                                        child: Image.network(
-                                          'https://media-cldnry.s-nbcnews.com/image/upload/newscms/2016_03/943381/pizza_spaghetti_pie.jpg',
+                              Stack(
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Image.network(
+                                      'https://media-cldnry.s-nbcnews.com/image/upload/newscms/2016_03/943381/pizza_spaghetti_pie.jpg',
+                                      width: 185.0,
+                                      height: 250.0,
+                                      fit: BoxFit.cover,
+                                    ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Container(
+                                      width: 185.0,
+                                      height: 250.0,
+                                      decoration: BoxDecoration(
+                                        color: Color(0x8AC75740),
+                                      ),
+                                      child: FFButtonWidget(
+                                        onPressed: () {
+                                          print('Button pressed ...');
+                                        },
+                                        text: '',
+                                        options: FFButtonOptions(
                                           width: 185.0,
                                           height: 250.0,
-                                          fit: BoxFit.cover,
+                                          padding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          iconPadding:
+                                              EdgeInsetsDirectional.fromSTEB(
+                                                  0.0, 0.0, 0.0, 0.0),
+                                          color: Color(0x004B39EF),
+                                          textStyle:
+                                              FlutterFlowTheme.of(context)
+                                                  .titleSmall
+                                                  .override(
+                                                    fontFamily: 'Poppins',
+                                                    color: Colors.white,
+                                                  ),
+                                          borderSide: BorderSide(
+                                            color: Colors.transparent,
+                                            width: 1.0,
+                                          ),
+                                          borderRadius:
+                                              BorderRadius.circular(8.0),
                                         ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            3.0, 0.0, 0.0, 0.0),
-                                        child: Container(
-                                          width: 185.0,
-                                          height: 250.0,
-                                          decoration: BoxDecoration(
-                                            color: Color(0x8AC75740),
-                                          ),
-                                          child: Padding(
-                                            padding:
-                                                EdgeInsetsDirectional.fromSTEB(
-                                                    3.0, 0.0, 0.0, 0.0),
-                                            child: FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
-                                              },
-                                              text: '',
-                                              options: FFButtonOptions(
-                                                width: 185.0,
-                                                height: 250.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                iconPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0x004B39EF),
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Poppins',
-                                                          color: Colors.white,
-                                                        ),
-                                                borderSide: BorderSide(
-                                                  color: Colors.transparent,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          50.0, 110.0, 0.0, 0.0),
+                                      child: Text(
+                                        'Pasta y Pizzas',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Oswald',
+                                              color: Colors.white,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w800,
                                             ),
-                                          ),
-                                        ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            50.0, 110.0, 0.0, 0.0),
-                                        child: Text(
-                                          'Pasta y Pizzas',
-                                          textAlign: TextAlign.center,
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Oswald',
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                        ),
-                                      ),
-                                    ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                               Stack(
                                 children: [
@@ -838,96 +857,83 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                               0.0, 5.0, 0.0, 0.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    5.0, 0.0, 0.0, 0.0),
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            3.0, 0.0, 0.0, 0.0),
-                                        child: Image.network(
-                                          'https://comerbeber.com/archivos/imagen/2017/05/sopasvariadas_as_101859650_75.jpg',
-                                          width: 185.0,
-                                          height: 250.0,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                              Stack(
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Image.network(
+                                      'https://comerbeber.com/archivos/imagen/2017/05/sopasvariadas_as_101859650_75.jpg',
+                                      width: 185.0,
+                                      height: 250.0,
+                                      fit: BoxFit.cover,
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Container(
+                                      width: 185.0,
+                                      height: 250.0,
+                                      decoration: BoxDecoration(
+                                        color: Color(0x8CDCA21A),
+                                      ),
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             3.0, 0.0, 0.0, 0.0),
-                                        child: Container(
-                                          width: 185.0,
-                                          height: 250.0,
-                                          decoration: BoxDecoration(
-                                            color: Color(0x8CDCA21A),
-                                          ),
-                                          child: Padding(
+                                        child: FFButtonWidget(
+                                          onPressed: () {
+                                            print('Button pressed ...');
+                                          },
+                                          text: '',
+                                          options: FFButtonOptions(
+                                            width: 185.0,
+                                            height: 250.0,
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
-                                                    3.0, 0.0, 0.0, 0.0),
-                                            child: FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
-                                              },
-                                              text: '',
-                                              options: FFButtonOptions(
-                                                width: 185.0,
-                                                height: 250.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                iconPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0x004B39EF),
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Poppins',
-                                                          color: Colors.white,
-                                                        ),
-                                                borderSide: BorderSide(
-                                                  color: Colors.transparent,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
+                                                    0.0, 0.0, 0.0, 0.0),
+                                            iconPadding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                            color: Color(0x004B39EF),
+                                            textStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily: 'Poppins',
+                                                      color: Colors.white,
+                                                    ),
+                                            borderSide: BorderSide(
+                                              color: Colors.transparent,
+                                              width: 1.0,
                                             ),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            50.0, 110.0, 0.0, 0.0),
-                                        child: Text(
-                                          'Sopas, Purés y\nCremas',
-                                          textAlign: TextAlign.center,
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Oswald',
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                        ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          50.0, 110.0, 0.0, 0.0),
+                                      child: Text(
+                                        'Sopas, Purés y\nCremas',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Oswald',
+                                              color: Colors.white,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                               Stack(
                                 children: [
@@ -1014,99 +1020,86 @@ class _CategoriasWidgetState extends State<CategoriasWidget> {
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 5.0, 0.0, 0.0),
+                              0.0, 5.0, 0.0, 40.0),
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
-                              Padding(
-                                padding: EdgeInsetsDirectional.fromSTEB(
-                                    5.0, 0.0, 0.0, 0.0),
-                                child: Stack(
-                                  children: [
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            3.0, 0.0, 0.0, 0.0),
-                                        child: Image.network(
-                                          'https://bucketrediseno.s3.amazonaws.com/uploads/article/parallax_en/983/optimizada_interestng-mexican-food-facts.jpg',
-                                          width: 185.0,
-                                          height: 250.0,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      ),
+                              Stack(
+                                children: [
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Image.network(
+                                      'https://bucketrediseno.s3.amazonaws.com/uploads/article/parallax_en/983/optimizada_interestng-mexican-food-facts.jpg',
+                                      width: 185.0,
+                                      height: 250.0,
+                                      fit: BoxFit.cover,
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Container(
+                                      width: 185.0,
+                                      height: 250.0,
+                                      decoration: BoxDecoration(
+                                        color: Color(0x8FFE006C),
+                                      ),
                                       child: Padding(
                                         padding: EdgeInsetsDirectional.fromSTEB(
                                             3.0, 0.0, 0.0, 0.0),
-                                        child: Container(
-                                          width: 185.0,
-                                          height: 250.0,
-                                          decoration: BoxDecoration(
-                                            color: Color(0x8FFE006C),
-                                          ),
-                                          child: Padding(
+                                        child: FFButtonWidget(
+                                          onPressed: () {
+                                            print('Button pressed ...');
+                                          },
+                                          text: '',
+                                          options: FFButtonOptions(
+                                            width: 185.0,
+                                            height: 250.0,
                                             padding:
                                                 EdgeInsetsDirectional.fromSTEB(
-                                                    3.0, 0.0, 0.0, 0.0),
-                                            child: FFButtonWidget(
-                                              onPressed: () {
-                                                print('Button pressed ...');
-                                              },
-                                              text: '',
-                                              options: FFButtonOptions(
-                                                width: 185.0,
-                                                height: 250.0,
-                                                padding: EdgeInsetsDirectional
-                                                    .fromSTEB(
-                                                        0.0, 0.0, 0.0, 0.0),
-                                                iconPadding:
-                                                    EdgeInsetsDirectional
-                                                        .fromSTEB(
-                                                            0.0, 0.0, 0.0, 0.0),
-                                                color: Color(0x004B39EF),
-                                                textStyle:
-                                                    FlutterFlowTheme.of(context)
-                                                        .titleSmall
-                                                        .override(
-                                                          fontFamily: 'Poppins',
-                                                          color: Colors.white,
-                                                        ),
-                                                borderSide: BorderSide(
-                                                  color: Colors.transparent,
-                                                  width: 1.0,
-                                                ),
-                                                borderRadius:
-                                                    BorderRadius.circular(8.0),
-                                              ),
+                                                    0.0, 0.0, 0.0, 0.0),
+                                            iconPadding:
+                                                EdgeInsetsDirectional.fromSTEB(
+                                                    0.0, 0.0, 0.0, 0.0),
+                                            color: Color(0x004B39EF),
+                                            textStyle:
+                                                FlutterFlowTheme.of(context)
+                                                    .titleSmall
+                                                    .override(
+                                                      fontFamily: 'Poppins',
+                                                      color: Colors.white,
+                                                    ),
+                                            borderSide: BorderSide(
+                                              color: Colors.transparent,
+                                              width: 1.0,
                                             ),
+                                            borderRadius:
+                                                BorderRadius.circular(8.0),
                                           ),
                                         ),
                                       ),
                                     ),
-                                    Align(
-                                      alignment: AlignmentDirectional(0.0, 0.0),
-                                      child: Padding(
-                                        padding: EdgeInsetsDirectional.fromSTEB(
-                                            50.0, 110.0, 0.0, 0.0),
-                                        child: Text(
-                                          'Mexicana',
-                                          textAlign: TextAlign.center,
-                                          style: FlutterFlowTheme.of(context)
-                                              .bodyMedium
-                                              .override(
-                                                fontFamily: 'Oswald',
-                                                color: Colors.white,
-                                                fontSize: 20.0,
-                                                fontWeight: FontWeight.w800,
-                                              ),
-                                        ),
+                                  ),
+                                  Align(
+                                    alignment: AlignmentDirectional(0.0, 0.0),
+                                    child: Padding(
+                                      padding: EdgeInsetsDirectional.fromSTEB(
+                                          50.0, 110.0, 0.0, 0.0),
+                                      child: Text(
+                                        'Mexicana',
+                                        textAlign: TextAlign.center,
+                                        style: FlutterFlowTheme.of(context)
+                                            .bodyMedium
+                                            .override(
+                                              fontFamily: 'Oswald',
+                                              color: Colors.white,
+                                              fontSize: 20.0,
+                                              fontWeight: FontWeight.w800,
+                                            ),
                                       ),
                                     ),
-                                  ],
-                                ),
+                                  ),
+                                ],
                               ),
                               Stack(
                                 children: [

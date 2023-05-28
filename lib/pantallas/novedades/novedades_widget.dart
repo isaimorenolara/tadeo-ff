@@ -1,5 +1,7 @@
+import '/auth/firebase_auth/auth_util.dart';
 import '/backend/backend.dart';
 import '/flutter_flow/flutter_flow_theme.dart';
+import '/flutter_flow/flutter_flow_toggle_icon.dart';
 import '/flutter_flow/flutter_flow_util.dart';
 import '/flutter_flow/flutter_flow_widgets.dart';
 import 'package:smooth_page_indicator/smooth_page_indicator.dart'
@@ -65,7 +67,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
               },
             );
           },
-          backgroundColor: FlutterFlowTheme.of(context).tertiary,
+          backgroundColor: FlutterFlowTheme.of(context).error,
           elevation: 8.0,
           child: Icon(
             Icons.add,
@@ -109,16 +111,50 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Container(
-                      width: 75.0,
-                      height: 75.0,
-                      clipBehavior: Clip.antiAlias,
-                      decoration: BoxDecoration(
-                        shape: BoxShape.circle,
-                      ),
-                      child: Image.network(
-                        'https://picsum.photos/seed/406/600',
-                        fit: BoxFit.cover,
+                    AuthUserStreamWidget(
+                      builder: (context) => StreamBuilder<List<UserRecord>>(
+                        stream: queryUserRecord(
+                          singleRecord: true,
+                        ),
+                        builder: (context, snapshot) {
+                          // Customize what your widget looks like when it's loading.
+                          if (!snapshot.hasData) {
+                            return Center(
+                              child: SizedBox(
+                                width: 50.0,
+                                height: 50.0,
+                                child: CircularProgressIndicator(
+                                  color: FlutterFlowTheme.of(context).primary,
+                                ),
+                              ),
+                            );
+                          }
+                          List<UserRecord> circleImageUserRecordList =
+                              snapshot.data!;
+                          // Return an empty Container when the item does not exist.
+                          if (snapshot.data!.isEmpty) {
+                            return Container();
+                          }
+                          final circleImageUserRecord =
+                              circleImageUserRecordList.isNotEmpty
+                                  ? circleImageUserRecordList.first
+                                  : null;
+                          return Container(
+                            width: 75.0,
+                            height: 75.0,
+                            clipBehavior: Clip.antiAlias,
+                            decoration: BoxDecoration(
+                              shape: BoxShape.circle,
+                            ),
+                            child: Image.network(
+                              valueOrDefault<String>(
+                                currentUserPhoto,
+                                'https://cdn.pixabay.com/photo/2015/10/05/22/37/blank-profile-picture-973460_1280.png',
+                              ),
+                              fit: BoxFit.cover,
+                            ),
+                          );
+                        },
                       ),
                     ),
                   ],
@@ -130,12 +166,14 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                   mainAxisSize: MainAxisSize.max,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      'Tadeo Lozano',
-                      style: FlutterFlowTheme.of(context).bodyMedium.override(
-                            fontFamily: 'Poppins',
-                            fontSize: 18.0,
-                          ),
+                    AuthUserStreamWidget(
+                      builder: (context) => Text(
+                        currentUserDisplayName,
+                        style: FlutterFlowTheme.of(context).bodyMedium.override(
+                              fontFamily: 'Poppins',
+                              fontSize: 18.0,
+                            ),
+                      ),
                     ),
                   ],
                 ),
@@ -145,7 +183,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    'tadeolozano@gmail.com',
+                    currentUserEmail,
                     style: FlutterFlowTheme.of(context).bodyMedium,
                   ),
                 ],
@@ -157,23 +195,33 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   children: [
-                    ListTile(
-                      leading: Icon(
-                        Icons.person_sharp,
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        context.pushNamed('editarPerfil');
+                      },
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.person_sharp,
+                        ),
+                        title: Text(
+                          'Cuenta',
+                          style: FlutterFlowTheme.of(context)
+                              .headlineSmall
+                              .override(
+                                fontFamily: 'Poppins',
+                                fontSize: 20.0,
+                              ),
+                        ),
+                        subtitle: Text(
+                          'Configura tu cuenta',
+                          style: FlutterFlowTheme.of(context).titleSmall,
+                        ),
+                        dense: false,
                       ),
-                      title: Text(
-                        'Cuenta',
-                        style:
-                            FlutterFlowTheme.of(context).headlineSmall.override(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 20.0,
-                                ),
-                      ),
-                      subtitle: Text(
-                        'Configura tu cuenta',
-                        style: FlutterFlowTheme.of(context).titleSmall,
-                      ),
-                      dense: false,
                     ),
                     ListTile(
                       leading: Icon(
@@ -389,6 +437,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                       fontFamily: 'Poppins',
                       color: Colors.white,
                     ),
+                elevation: 0.0,
                 borderSide: BorderSide(
                   color: Colors.transparent,
                   width: 1.0,
@@ -401,6 +450,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
           elevation: 4.0,
         ),
         body: SafeArea(
+          top: true,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -421,6 +471,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                           scrollDirection: Axis.horizontal,
                           child: Row(
                             mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.center,
                             children: [
                               FFButtonWidget(
                                 onPressed: () async {
@@ -734,15 +785,89 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                                                               padding:
                                                                   EdgeInsetsDirectional
                                                                       .fromSTEB(
-                                                                          310.0,
-                                                                          67.0,
+                                                                          300.0,
+                                                                          60.0,
                                                                           0.0,
                                                                           0.0),
-                                                              child: Icon(
-                                                                Icons.favorite,
-                                                                color: Colors
-                                                                    .black,
-                                                                size: 24.0,
+                                                              child: StreamBuilder<
+                                                                  List<
+                                                                      CorazonRecord>>(
+                                                                stream:
+                                                                    queryCorazonRecord(
+                                                                  singleRecord:
+                                                                      true,
+                                                                ),
+                                                                builder: (context,
+                                                                    snapshot) {
+                                                                  // Customize what your widget looks like when it's loading.
+                                                                  if (!snapshot
+                                                                      .hasData) {
+                                                                    return Center(
+                                                                      child:
+                                                                          SizedBox(
+                                                                        width:
+                                                                            50.0,
+                                                                        height:
+                                                                            50.0,
+                                                                        child:
+                                                                            CircularProgressIndicator(
+                                                                          color:
+                                                                              FlutterFlowTheme.of(context).primary,
+                                                                        ),
+                                                                      ),
+                                                                    );
+                                                                  }
+                                                                  List<CorazonRecord>
+                                                                      toggleIconCorazonRecordList =
+                                                                      snapshot
+                                                                          .data!;
+                                                                  // Return an empty Container when the item does not exist.
+                                                                  if (snapshot
+                                                                      .data!
+                                                                      .isEmpty) {
+                                                                    return Container();
+                                                                  }
+                                                                  final toggleIconCorazonRecord = toggleIconCorazonRecordList
+                                                                          .isNotEmpty
+                                                                      ? toggleIconCorazonRecordList
+                                                                          .first
+                                                                      : null;
+                                                                  return ToggleIcon(
+                                                                    onPressed:
+                                                                        () async {
+                                                                      final corazonUpdateData =
+                                                                          {
+                                                                        'like':
+                                                                            !toggleIconCorazonRecord!.like,
+                                                                      };
+                                                                      await toggleIconCorazonRecord!
+                                                                          .reference
+                                                                          .update(
+                                                                              corazonUpdateData);
+                                                                    },
+                                                                    value:
+                                                                        toggleIconCorazonRecord!
+                                                                            .like,
+                                                                    onIcon:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .favorite_border,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                    offIcon:
+                                                                        Icon(
+                                                                      Icons
+                                                                          .favorite,
+                                                                      color: Colors
+                                                                          .black,
+                                                                      size:
+                                                                          24.0,
+                                                                    ),
+                                                                  );
+                                                                },
                                                               ),
                                                             ),
                                                           ],
@@ -1480,7 +1605,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                                                       ),
                                                       child: Image.network(
                                                         wrapRecetasRecord
-                                                            .imagen!,
+                                                            .imagen,
                                                         width: 185.0,
                                                         height: 200.0,
                                                         fit: BoxFit.cover,
@@ -1501,7 +1626,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                                                                   0.0),
                                                       child: AutoSizeText(
                                                         wrapRecetasRecord
-                                                            .nombreReceta!,
+                                                            .nombreReceta,
                                                         textAlign:
                                                             TextAlign.center,
                                                         maxLines: 20,
@@ -1525,9 +1650,13 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                                                     ),
                                                   ),
                                                   FFButtonWidget(
-                                                    onPressed: () {
-                                                      print(
-                                                          'Button pressed ...');
+                                                    onPressed: () async {
+                                                      if (wrapRecetasRecord
+                                                              .nombreReceta ==
+                                                          'Tacos al pastor') {
+                                                        context.pushNamed(
+                                                            'Receta');
+                                                      }
                                                     },
                                                     text: '',
                                                     options: FFButtonOptions(
@@ -1582,7 +1711,7 @@ class _NovedadesWidgetState extends State<NovedadesWidget> {
                                                                   0.0),
                                                       child: AutoSizeText(
                                                         wrapRecetasRecord
-                                                            .descripcion!,
+                                                            .descripcion,
                                                         textAlign:
                                                             TextAlign.center,
                                                         maxLines: 20,

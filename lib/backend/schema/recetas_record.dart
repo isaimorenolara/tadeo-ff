@@ -1,64 +1,82 @@
 import 'dart:async';
 
+import '/backend/schema/util/firestore_util.dart';
+import '/backend/schema/util/schema_util.dart';
+
 import 'index.dart';
-import 'serializers.dart';
-import 'package:built_value/built_value.dart';
+import '/flutter_flow/flutter_flow_util.dart';
 
-part 'recetas_record.g.dart';
+class RecetasRecord extends FirestoreRecord {
+  RecetasRecord._(
+    DocumentReference reference,
+    Map<String, dynamic> data,
+  ) : super(reference, data) {
+    _initializeFields();
+  }
 
-abstract class RecetasRecord
-    implements Built<RecetasRecord, RecetasRecordBuilder> {
-  static Serializer<RecetasRecord> get serializer => _$recetasRecordSerializer;
+  // "NombreReceta" field.
+  String? _nombreReceta;
+  String get nombreReceta => _nombreReceta ?? '';
+  bool hasNombreReceta() => _nombreReceta != null;
 
-  @BuiltValueField(wireName: 'NombreReceta')
-  String? get nombreReceta;
+  // "Categoria" field.
+  String? _categoria;
+  String get categoria => _categoria ?? '';
+  bool hasCategoria() => _categoria != null;
 
-  @BuiltValueField(wireName: 'Categoria')
-  String? get categoria;
+  // "Descripcion" field.
+  String? _descripcion;
+  String get descripcion => _descripcion ?? '';
+  bool hasDescripcion() => _descripcion != null;
 
-  @BuiltValueField(wireName: 'Descripcion')
-  String? get descripcion;
+  // "ImagenesLista" field.
+  String? _imagenesLista;
+  String get imagenesLista => _imagenesLista ?? '';
+  bool hasImagenesLista() => _imagenesLista != null;
 
-  @BuiltValueField(wireName: 'ImagenesLista')
-  String? get imagenesLista;
+  // "Imagen" field.
+  String? _imagen;
+  String get imagen => _imagen ?? '';
+  bool hasImagen() => _imagen != null;
 
-  @BuiltValueField(wireName: 'Imagen')
-  String? get imagen;
+  // "Preparacion" field.
+  String? _preparacion;
+  String get preparacion => _preparacion ?? '';
+  bool hasPreparacion() => _preparacion != null;
 
-  @BuiltValueField(wireName: 'Preparacion')
-  String? get preparacion;
-
-  @BuiltValueField(wireName: kDocumentReferenceField)
-  DocumentReference? get ffRef;
-  DocumentReference get reference => ffRef!;
-
-  static void _initializeBuilder(RecetasRecordBuilder builder) => builder
-    ..nombreReceta = ''
-    ..categoria = ''
-    ..descripcion = ''
-    ..imagenesLista = ''
-    ..imagen = ''
-    ..preparacion = '';
+  void _initializeFields() {
+    _nombreReceta = snapshotData['NombreReceta'] as String?;
+    _categoria = snapshotData['Categoria'] as String?;
+    _descripcion = snapshotData['Descripcion'] as String?;
+    _imagenesLista = snapshotData['ImagenesLista'] as String?;
+    _imagen = snapshotData['Imagen'] as String?;
+    _preparacion = snapshotData['Preparacion'] as String?;
+  }
 
   static CollectionReference get collection =>
       FirebaseFirestore.instance.collection('recetas');
 
-  static Stream<RecetasRecord> getDocument(DocumentReference ref) => ref
-      .snapshots()
-      .map((s) => serializers.deserializeWith(serializer, serializedData(s))!);
+  static Stream<RecetasRecord> getDocument(DocumentReference ref) =>
+      ref.snapshots().map((s) => RecetasRecord.fromSnapshot(s));
 
-  static Future<RecetasRecord> getDocumentOnce(DocumentReference ref) => ref
-      .get()
-      .then((s) => serializers.deserializeWith(serializer, serializedData(s))!);
+  static Future<RecetasRecord> getDocumentOnce(DocumentReference ref) =>
+      ref.get().then((s) => RecetasRecord.fromSnapshot(s));
 
-  RecetasRecord._();
-  factory RecetasRecord([void Function(RecetasRecordBuilder) updates]) =
-      _$RecetasRecord;
+  static RecetasRecord fromSnapshot(DocumentSnapshot snapshot) =>
+      RecetasRecord._(
+        snapshot.reference,
+        mapFromFirestore(snapshot.data() as Map<String, dynamic>),
+      );
 
   static RecetasRecord getDocumentFromData(
-          Map<String, dynamic> data, DocumentReference reference) =>
-      serializers.deserializeWith(serializer,
-          {...mapFromFirestore(data), kDocumentReferenceField: reference})!;
+    Map<String, dynamic> data,
+    DocumentReference reference,
+  ) =>
+      RecetasRecord._(reference, mapFromFirestore(data));
+
+  @override
+  String toString() =>
+      'RecetasRecord(reference: ${reference.path}, data: $snapshotData)';
 }
 
 Map<String, dynamic> createRecetasRecordData({
@@ -69,17 +87,15 @@ Map<String, dynamic> createRecetasRecordData({
   String? imagen,
   String? preparacion,
 }) {
-  final firestoreData = serializers.toFirestore(
-    RecetasRecord.serializer,
-    RecetasRecord(
-      (r) => r
-        ..nombreReceta = nombreReceta
-        ..categoria = categoria
-        ..descripcion = descripcion
-        ..imagenesLista = imagenesLista
-        ..imagen = imagen
-        ..preparacion = preparacion,
-    ),
+  final firestoreData = mapToFirestore(
+    <String, dynamic>{
+      'NombreReceta': nombreReceta,
+      'Categoria': categoria,
+      'Descripcion': descripcion,
+      'ImagenesLista': imagenesLista,
+      'Imagen': imagen,
+      'Preparacion': preparacion,
+    }.withoutNulls,
   );
 
   return firestoreData;

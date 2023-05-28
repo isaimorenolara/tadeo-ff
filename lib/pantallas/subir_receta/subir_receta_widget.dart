@@ -139,23 +139,33 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                   shrinkWrap: true,
                   scrollDirection: Axis.vertical,
                   children: [
-                    ListTile(
-                      leading: Icon(
-                        Icons.person_sharp,
+                    InkWell(
+                      splashColor: Colors.transparent,
+                      focusColor: Colors.transparent,
+                      hoverColor: Colors.transparent,
+                      highlightColor: Colors.transparent,
+                      onTap: () async {
+                        context.pushNamed('editarPerfil');
+                      },
+                      child: ListTile(
+                        leading: Icon(
+                          Icons.person_sharp,
+                        ),
+                        title: Text(
+                          'Cuenta',
+                          style: FlutterFlowTheme.of(context)
+                              .headlineSmall
+                              .override(
+                                fontFamily: 'Poppins',
+                                fontSize: 20.0,
+                              ),
+                        ),
+                        subtitle: Text(
+                          'Configura tu cuenta',
+                          style: FlutterFlowTheme.of(context).titleSmall,
+                        ),
+                        dense: false,
                       ),
-                      title: Text(
-                        'Cuenta',
-                        style:
-                            FlutterFlowTheme.of(context).headlineSmall.override(
-                                  fontFamily: 'Poppins',
-                                  fontSize: 20.0,
-                                ),
-                      ),
-                      subtitle: Text(
-                        'Configura tu cuenta',
-                        style: FlutterFlowTheme.of(context).titleSmall,
-                      ),
-                      dense: false,
                     ),
                     ListTile(
                       leading: Icon(
@@ -192,33 +202,6 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                         style: FlutterFlowTheme.of(context).titleSmall,
                       ),
                       dense: false,
-                    ),
-                    FFButtonWidget(
-                      onPressed: () {
-                        print('Button pressed ...');
-                      },
-                      text: 'Subir Receta',
-                      options: FFButtonOptions(
-                        width: 130.0,
-                        height: 40.0,
-                        padding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        iconPadding:
-                            EdgeInsetsDirectional.fromSTEB(0.0, 0.0, 0.0, 0.0),
-                        color: Color(0x7E616161),
-                        textStyle: FlutterFlowTheme.of(context)
-                            .titleSmall
-                            .override(
-                              fontFamily: 'Poppins',
-                              color: FlutterFlowTheme.of(context).primaryText,
-                              fontSize: 18.0,
-                            ),
-                        borderSide: BorderSide(
-                          color: Colors.transparent,
-                          width: 1.0,
-                        ),
-                        borderRadius: BorderRadius.circular(12.0),
-                      ),
                     ),
                     Padding(
                       padding:
@@ -333,11 +316,6 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                       _model.textController1Validator.asValidator(context),
                 ),
               ),
-              Icon(
-                Icons.settings_outlined,
-                color: Colors.black,
-                size: 24.0,
-              ),
             ],
           ),
           actions: [
@@ -356,6 +334,7 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                       fontFamily: 'Poppins',
                       color: Colors.white,
                     ),
+                elevation: 0.0,
                 borderSide: BorderSide(
                   color: Colors.transparent,
                   width: 1.0,
@@ -368,6 +347,7 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
           elevation: 4.0,
         ),
         body: SafeArea(
+          top: true,
           child: SingleChildScrollView(
             child: Column(
               mainAxisSize: MainAxisSize.max,
@@ -381,6 +361,7 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                   child: SingleChildScrollView(
                     child: Column(
                       mainAxisSize: MainAxisSize.max,
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
@@ -1173,7 +1154,7 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                         ),
                         Padding(
                           padding: EdgeInsetsDirectional.fromSTEB(
-                              0.0, 20.0, 0.0, 0.0),
+                              0.0, 20.0, 0.0, 40.0),
                           child: FFButtonWidget(
                             onPressed: () async {
                               final recetasCreateData = createRecetasRecordData(
@@ -1224,6 +1205,36 @@ class _SubirRecetaWidgetState extends State<SubirRecetaWidget> {
                             text: 'Subir Receta',
                             options: FFButtonOptions(
                               width: 130.0,
+                              height: 40.0,
+                              padding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              iconPadding: EdgeInsetsDirectional.fromSTEB(
+                                  0.0, 0.0, 0.0, 0.0),
+                              color: FlutterFlowTheme.of(context).error,
+                              textStyle: FlutterFlowTheme.of(context)
+                                  .titleSmall
+                                  .override(
+                                    fontFamily: 'Poppins',
+                                    color: Colors.white,
+                                  ),
+                              borderSide: BorderSide(
+                                color: Colors.transparent,
+                                width: 1.0,
+                              ),
+                              borderRadius: BorderRadius.circular(8.0),
+                            ),
+                          ),
+                        ),
+                        Padding(
+                          padding: EdgeInsetsDirectional.fromSTEB(
+                              0.0, 20.0, 0.0, 40.0),
+                          child: FFButtonWidget(
+                            onPressed: () async {
+                              context.safePop();
+                            },
+                            text: 'Regresar',
+                            options: FFButtonOptions(
+                              width: 80.0,
                               height: 40.0,
                               padding: EdgeInsetsDirectional.fromSTEB(
                                   0.0, 0.0, 0.0, 0.0),
